@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product App</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css"/>
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+
+    <style>
+        header {
+            justify-items: center;
+            margin: 20px 0;
+        }
+
+        .left, .right {
+            flex: 1; /* make both take equal width */
+            text-align: center;
+        }
+
+        #product-table {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>Product Inventory</h1>
+</header>
+
+<div class="container">
+    <div class="left">
+        <!-- Load & Search Section -->
+        <div>
+            <sl-button variant="primary"
+                       hx-get="/products"
+                       hx-target="#product-table"
+                       hx-trigger="click">
+                Load Products
+            </sl-button>
+
+            <!-- 🔍 Hidden Search Input initially -->
+            <div id="search-container" style="display:none;">
+                <sl-input id="search-input" placeholder="Search products..."
+                          hx-get="/products/search"
+                          hx-target="#product-table tbody"
+                          hx-trigger="keyup changed delay:300ms"
+                          hx-params="*"
+                          name="query">
+                </sl-input>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div id="product-table">
+            <!-- full table will load here from fragments.html -->
+        </div>
+
+    </div>
+
+    <div class="right">
+        <!-- Add Product Form -->
+        <div id="add-form" class="mt-4" style="display:none;"
+             hx-trigger="htmx:afterSwap"
+             hx-swap-oob="true">
+            <sl-card class="p-4">
+            <form hx-post="/products"
+                  hx-target="#product-table tbody"
+                  hx-swap="afterbegin">
+                <sl-input name="title" placeholder="Title" required></sl-input>
+                <sl-input name="vendor" placeholder="Vendor"></sl-input>
+                <sl-input name="price" type="number" placeholder="Price"></sl-input>
+                <sl-button type="submit" variant="success">Add</sl-button>
+            </form>
+            </sl-card>
+        </div>
+    </div>
+</div>
+<!-- JS to show form + search after loading table -->
+<script>
+    document.body.addEventListener('htmx:afterSwap', function (evt) {
+        if (evt.detail.target.id === 'product-table') {
+            // ✅ Show the add product form
+            document.getElementById('add-form').style.display = 'block';
+
+            // ✅ Show the search input
+            document.getElementById('search-container').style.display = 'inline-block';
+
+            // Optional: trigger search if any value exists
+            const searchInput = document.getElementById('search-input');
+            if (searchInput && searchInput.value.trim() !== "") {
+                htmx.trigger(searchInput, 'keyup');
+            }
+        }
+    });
+</script>
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        this.querySelectorAll('sl-input').forEach(sl => {
+            const name = sl.getAttribute('name');
+            const existing = this.querySelector(`input[name="${name}"]`);
+            if (existing) existing.remove();
+
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = name;
+            hidden.value = sl.value;
+            this.appendChild(hidden);
+        });
+    });
+</script>
+
+</body>
+</html>

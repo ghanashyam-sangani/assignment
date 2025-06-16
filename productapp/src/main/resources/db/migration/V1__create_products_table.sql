@@ -1,0 +1,8 @@
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  vendor VARCHAR(255),
+  price NUMERIC,
+  variants JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

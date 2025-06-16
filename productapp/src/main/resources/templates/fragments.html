@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<!-- Table Fragment -->
+<div th:fragment="productTable">
+    <table class="table-auto w-full border">
+        <thead>
+        <tr class="bg-gray-100">
+            <th class="px-2 py-1">ID</th>
+            <th class="px-2 py-1">Title</th>
+            <th class="px-2 py-1">Vendor</th>
+            <th class="px-2 py-1">Price</th>
+            <th class="px-2 py-1">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="prod : ${products}">
+            <th:block th:replace="~{fragments :: productRow(product=${prod})}" />
+        </th:block>
+        </tbody>
+    </table>
+</div>
+
+<!-- Single Row Fragment -->
+<th:block th:fragment="productRow(product)">
+    <tr th:id="'product-' + ${product.id}">
+        <td th:text="${product.id}">Loading...</td>
+        <td th:text="${product.title}">Title</td>
+        <td th:text="${product.vendor}">Vendor</td>
+        <td th:text="${product.price}">Price</td>
+        <td>
+            <sl-button variant="primary" size="small"
+                       th:attr="
+                    hx-get=@{/products/edit/{id}(id=${product.id})},
+                    hx-target='#product-' + ${product.id},
+                    hx-swap='outerHTML'">
+                Edit
+            </sl-button>
+
+            <sl-button variant="danger" size="small"
+                       th:attr="
+                    hx-delete=@{/products/{id}(id=${product.id})},
+                    hx-target='#product-' + ${product.id},
+                    hx-swap='outerHTML'">
+                Delete
+            </sl-button>
+        </td>
+    </tr>
+</th:block>
+
+<!-- Edit Form Fragment -->
+<th:block th:fragment="editProductForm(product)">
+    <tr th:id="'product-' + ${product.id}">
+        <td th:text="${product.id}">1</td>
+        <td>
+            <input type="text" name="title" th:value="${product.title}" th:form="'edit-form-' + ${product.id}" />
+        </td>
+        <td>
+            <input type="text" name="vendor" th:value="${product.vendor}" th:form="'edit-form-' + ${product.id}" />
+        </td>
+        <td>
+            <input type="number" name="price" th:value="${product.price}" th:form="'edit-form-' + ${product.id}" />
+        </td>
+        <td>
+            <form th:attr="
+                    id='edit-form-' + ${product.id},
+                    hx-put=@{/products/{id}(id=${product.id})},
+                    hx-target='#product-' + ${product.id},
+                    hx-swap='outerHTML'">
+                <!-- ✅ Move the hidden ID field *inside* the form -->
+                <input type="hidden" name="id" th:value="${product.id}" />
+
+                <sl-button type="submit" size="small" variant="success">Save</sl-button>
+                <sl-button type="button" size="small" variant="warning"
+                           th:attr="
+                        hx-get=@{/products/{id}(id=${product.id})},
+                        hx-target='#product-' + ${product.id},
+                        hx-swap='outerHTML'">
+                    Cancel
+                </sl-button>
+            </form>
+        </td>
+    </tr>
+</th:block>
+
+
+<!-- Not Found Fragment -->
+<th:block th:fragment="productNotFoundRow">
+    <tr>
+        <td colspan="5" class="text-red-600 text-center">Product not found.</td>
+    </tr>
+</th:block>
+
+<!-- Fragment to render just table rows (used in search) -->
+<th:block th:fragment="productTableRows">
+<th:block th:if="${#lists.isEmpty(products)}">
+    <tr><td colspan="5" class="text-center text-red-500">No products found.</td></tr>
+</th:block>
+<th:block th:each="prod : ${products}">
+    <th:block th:replace="~{fragments :: productRow(product=${prod})}" />
+</th:block>
+</th:block>
+
+
+</body>
+</html>
