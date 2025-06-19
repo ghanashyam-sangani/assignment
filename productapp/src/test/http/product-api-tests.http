@@ -1,0 +1,50 @@
+### Test ProductController APIs
+
+### Variables
+@baseUrl = http://localhost:8080
+
+### 1. Get Index Page
+GET {{baseUrl}}/
+Accept: text/html
+
+### 2. List All Products
+GET {{baseUrl}}/products
+Accept: text/html
+
+### 3. Add a New Product
+POST {{baseUrl}}/products
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title=Test Product&vendor=Test Vendor&price=19.99
+
+### 4. Get Edit Form for a Product
+# Replace {id} with an actual product ID
+GET {{baseUrl}}/products/edit/1
+Accept: text/html
+
+### 5. Update a Product
+# Replace {id} with an actual product ID
+PUT {{baseUrl}}/products/1
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title=Updated Product&vendor=Updated Vendor&price=29.99
+
+### 6. Delete a Product
+# Replace {id} with an actual product ID
+DELETE {{baseUrl}}/products/1
+Accept: text/html
+
+### 7. Get a Single Product
+# Replace {id} with an actual product ID
+GET {{baseUrl}}/products/1
+Accept: text/html
+
+### 8. Show Search Page
+GET {{baseUrl}}/search
+Accept: text/html
+
+### 9. Search Products
+GET {{baseUrl}}/products/search?query=test
+Accept: text/html

@@ -1,0 +1,82 @@
+### Enhanced Test ProductController APIs
+
+### This file uses environment variables from http-client.env.json
+### To run these tests, select an environment (development, testing, or production) from the dropdown in IntelliJ IDEA
+
+### No need to set variables here as they come from the environment configuration
+
+### Response handlers
+
+@baseUrl = http://localhost:8080
+@testProductTitle = variable value
+
+# @name=createProduct
+POST {{baseUrl}}/products
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title={{testProductTitle}}&vendor={{testProductVendor}}&price={{testProductPrice}}
+
+### Store the response for later use
+@createdProductId = 1 
+
+### 1. Get Index Page
+GET {{baseUrl}}/
+Accept: text/html
+
+### 2. List All Products
+GET {{baseUrl}}/products
+Accept: text/html
+
+### 3. Add a New Product
+POST {{baseUrl}}/products
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title={{testProductTitle}}-New&vendor={{testProductVendor}}-New&price={{testProductPrice}}
+
+### 4. Get Edit Form for a Product
+GET {{baseUrl}}/products/edit/{{createdProductId}}
+Accept: text/html
+
+### 5. Update a Product
+PUT {{baseUrl}}/products/{{createdProductId}}
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title={{testProductTitle}}-Updated&vendor={{testProductVendor}}-Updated&price={{testProductPrice}}
+
+### 6. Get the Updated Product
+GET {{baseUrl}}/products/{{createdProductId}}
+Accept: text/html
+
+### 7. Search Products (should find our test product)
+GET {{baseUrl}}/products/search?query={{testProductTitle}}-Updated
+Accept: text/html
+
+### 8. Show Search Page
+GET {{baseUrl}}/search
+Accept: text/html
+
+### 9. Delete the Product
+DELETE {{baseUrl}}/products/{{createdProductId}}
+Accept: text/html
+
+### 10. Verify Product is Deleted (should return not found)
+GET {{baseUrl}}/products/{{createdProductId}}
+Accept: text/html
+
+### 11. Test with Invalid Data
+POST {{baseUrl}}/products
+Content-Type: application/x-www-form-urlencoded
+Accept: text/html
+
+title=&vendor=&price=invalid
+
+### 12. Test Search with Empty Query
+GET {{baseUrl}}/products/search?query=
+Accept: text/html
+
+### 13. Test Search with Special Characters
+GET {{baseUrl}}/products/search?query=%25special%25
+Accept: text/html
